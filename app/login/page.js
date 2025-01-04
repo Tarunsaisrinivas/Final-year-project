@@ -12,7 +12,7 @@ const years = ['1st Year', '2nd Year', '3rd Year', '4th Year']
 const branches = ['Computer Science', 'Electrical', 'Mechanical', 'Civil']
 
 export default function Login() {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null)
+  const [selectedOption, setSelectedOption] = useState(null);
 
   return (
     <div className="min-h-screen bg-slate-500  flex items-center justify-center p-4">
@@ -91,4 +91,3 @@ export default function Login() {
     </div>
   )
 }
-
