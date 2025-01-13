@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,12 +12,20 @@ const years = ['1st Year', '2nd Year', '3rd Year', '4th Year']
 const branches = ['Computer Science', 'Electrical', 'Mechanical', 'Civil']
 
 export default function Login() {
+  const [opacity,setOpacity] = useState(1);
   const [selectedOption, setSelectedOption] = useState(null);
+  useEffect(()=>{
 
+    const duedate = new Date("2025-01-08");
+    const currentdate = new Date();
+    const daysPassed = Math.floor((duedate - currentdate)/ (1000 * 60 *60*24))
+    const newOpacity = Math.max(0,1 -(daysPassed * 0.05));
+    setOpacity(newOpacity);
+  },[])
   return (
-    <div className="min-h-screen bg-slate-500  flex items-center justify-center p-4">
-      <Card className="w-full max-w-md  bg-white shadow-xl">
-        <CardHeader className="bg-orange-500 text-white">
+    <div style={{opacity}} className="min-h-screen bg-background  flex items-center justify-center p-4">
+      <Card className="w-full max-w-md  bg-boxbackground shadow-xl">
+        <CardHeader className="bg-boxbackground text-textcolor1">
           <CardTitle className="text-2xl font-bold text-center">College Login Portal</CardTitle>
         </CardHeader>
         <CardContent className="mt-6">
@@ -26,7 +34,7 @@ export default function Login() {
               <Button
                 key={option}
                 variant={selectedOption === option ? "default" : "outline"}
-                className={`${selectedOption === option ? 'bg-orange-500 hover:bg-orange-600' : 'text-orange-500 hover:text-orange-600'}`}
+                className={`${selectedOption === option ? 'bg-buttonbg hover:bg-buttonbg/80 text-white' : 'text-buttonbg hover:text-buttonbg'}` }
                 onClick={() => setSelectedOption(option)}
               >
                 {option}
@@ -35,11 +43,11 @@ export default function Login() {
           </div>
 
           {selectedOption && (
-            <form className="space-y-4">
+            <form className="space-y-4 text-textcolor1">
               {selectedOption === 'Student' ? (
                 <>
-                  <div className="space-y-2">
-                    <Label htmlFor="rollNumber">Roll Number</Label>
+                  <div className="space-y-2  ">
+                    <Label htmlFor="rollNumber" >Roll Number</Label>
                     <Input id="rollNumber" type="text" placeholder="Enter your roll number" />
                   </div>
                   <div className="space-y-2">
@@ -63,7 +71,7 @@ export default function Login() {
                       <SelectTrigger>
                         <SelectValue placeholder="Select branch" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white text-textcolor1">
                         {branches.map((branch) => (
                           <SelectItem key={branch} value={branch.toLowerCase().replace(' ', '-')}>
                             {branch}
@@ -83,7 +91,7 @@ export default function Login() {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" placeholder="Enter your password" />
               </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600">Login</Button>
+              <Button className="w-full bg-buttonbg text-white hover:bg-buttonbg/80">Login</Button>
             </form>
           )}
         </CardContent>

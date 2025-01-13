@@ -1,0 +1,101 @@
+"use client";
+
+import React, { useState } from 'react';
+import { Container, Draggable } from 'react-drag-and-drop';
+import { Card, CardHeader } from '@/components/ui/card'; // Assuming these components are available in ShadCN
+import { Button } from '@/components/ui/button';
+
+const initialData = {
+  notApplied: [
+    { id: '1', content: 'Card 1' },
+    { id: '2', content: 'Card 2' },
+  ],
+  applied: [
+    { id: '3', content: 'Card 3' },
+  ],
+  selected: [
+    { id: '4', content: 'Card 4' },
+  ],
+  schedule: [
+    { id: '5', content: 'Card 5' },
+    { id: '6', content: 'Card 6' },
+  ]
+};
+
+const App = () => {
+  const [data, setData] = useState(initialData);
+
+  const handleDrop = (item, targetColumn) => {
+    const sourceColumn = Object.keys(data).find(col => data[col].some(card => card.id === item.id));
+
+    if (sourceColumn !== targetColumn) {
+      const newData = { ...data };
+      newData[sourceColumn] = newData[sourceColumn].filter(card => card.id !== item.id);
+      newData[targetColumn].push(item);
+
+      setData(newData);
+    }
+  };
+
+  return (
+    <div className="flex justify-between flex-wrap gap-6 p-6">
+      {['notApplied', 'applied', 'selected', 'schedule'].map((column) => (
+        <div
+          key={column}
+          className="bg-white rounded-lg shadow-lg w-[300px] min-h-[350px] p-6 flex flex-col items-center cursor-pointer transition-all ease-in-out"
+          onDrop={(e) => {
+            e.preventDefault();
+            const item = JSON.parse(e.dataTransfer.getData('item'));
+            handleDrop(item, column);
+          }}
+          onDragOver={(e) => e.preventDefault()}
+        >
+          <h3 className="text-center text-gray-800 mb-4 text-xl font-semibold">{column}</h3>
+          <div className="space-y-4 w-full">
+            {data[column].map((item) => (
+              column === 'applied' ? (
+                // For "applied" column, render the card without Draggable
+                <Card
+                  key={item.id}
+                  className="w-full mb-4 rounded-lg p-4 bg-gray-100 shadow-md"
+                >
+                  <CardHeader className="mb-2 text-center text-gray-700 font-bold">
+                    <h4>{item.content}</h4>
+                  </CardHeader>
+                  <div className="text-center">
+                    <Button variant="secondary" size="small" disabled>
+                      {`Move ${item.content}`}
+                    </Button>
+                  </div>
+                </Card>
+              ) : (
+                // For other columns, make the item draggable
+                <Draggable
+                  key={item.id}
+                  type="card"
+                  data={{ id: item.id, column }}
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('item', JSON.stringify(item));
+                  }}
+                >
+                  <Card className="w-full mb-4 rounded-lg p-4 bg-gray-100 shadow-md">
+                    <CardHeader className="mb-2 text-center text-gray-700 font-bold">
+                      <h4>{item.content}</h4>
+                    </CardHeader>
+                    <div className="text-center">
+                      <Button variant="secondary" size="small" disabled>
+                        {`Move ${item.content}`}
+                      </Button>
+                    </div>
+                  </Card>
+                </Draggable>
+              )
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default App;
